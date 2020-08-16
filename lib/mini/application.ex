@@ -3,16 +3,16 @@ defmodule Mini.Application do
   # for more information on OTP Applications
   @moduledoc false
 
-  use Application
-
   @port Application.get_env(:mini, :port)
 
+  use Application
+  require Logger
+
   def start(_type, _args) do
+    Logger.info("Staring application at port #{@port}...")
+
     children = [
-      {Plug.Cowboy,
-       scheme: :http,
-       plug: Mini.Router,
-       options: [port: String.to_integer(@port)]}
+      {Plug.Cowboy, scheme: :http, plug: Mini.Router, options: [port: String.to_integer(@port)]}
       # Starts a worker by calling: Mini.Worker.start_link(arg)
       # {Mini.Worker, arg}
     ]
