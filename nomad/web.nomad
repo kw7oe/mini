@@ -9,6 +9,7 @@ job "mini" {
       driver = "raw_exec"
 
       artifact {
+        source = "https://github.com/kw7oe/mini/releases/download/0.1.0/mini-0.1.0.tar.gz"
         destination = "local/mini"
       }
 
@@ -22,7 +23,7 @@ job "mini" {
       }
 
       resources {
-        cpu    = 512 # 250 MHz
+        cpu    = 250 # 250 MHz
         memory = 256 # 128 MB
 
         network {
