@@ -3,17 +3,17 @@ job "mini" {
   type = "service"
 
   group "web" {
-    count = 1
-
+    count = 3
     task "plug_cowboy" {
       driver = "raw_exec"
 
       artifact {
-        source = "https://github.com/kw7oe/mini/releases/download/0.1.0/mini-0.1.0.tar.gz"
+        source = "https://storage.googleapis.com/kw7oe/mini-0.1.0.tar.gz"
         destination = "local/mini"
       }
 
       env {
+        RELEASE_NODE = "${NOMAD_ALLOC_ID}"
         PORT = "${NOMAD_PORT_http}"
       }
 
@@ -29,6 +29,18 @@ job "mini" {
         network {
           mbits = 10
           port "http" {}
+        }
+      }
+
+      service {
+        name = "mini-webserver"
+        port = "http"
+        tags = ["macbook", "urlprefix-/"]
+        check {
+          type     = "http"
+          path     = "/version"
+          interval = "10s"
+          timeout  = "2s"
         }
       }
     }
