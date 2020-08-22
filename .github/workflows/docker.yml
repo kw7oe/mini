@@ -15,6 +15,6 @@ jobs:
         id: vars
         run: echo ::set-output name=version::$(grep 'version:' mix.exs | cut -d '"' -f2)
       - name: Print the version
-        run: echo ${{steps.vars.output.version}}
+        run: echo ${{steps.vars.outputs.version}}
       # - name: Build the tagged Docker image
       #   run: docker build . -t mini
