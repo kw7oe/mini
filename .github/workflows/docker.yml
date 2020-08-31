@@ -9,12 +9,22 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      # - name: Login to GitHub Packages
-      #   run: echo ${{ secrets.GH_TOKEN }} | docker login docker.pkg.github.com -u kw7oe --password-stdin
+      - name: Login to GitHub Packages
+        run: echo ${{ secrets.GH_TOKEN }} | docker login docker.pkg.github.com -u kw7oe --password-stdin
       - name: Get the version
         id: vars
         run: echo ::set-output name=version::$(grep 'version:' mix.exs | cut -d '"' -f2)
       - name: Print the version
         run: echo ${{steps.vars.outputs.version}}
-      # - name: Build the tagged Docker image
-      #   run: docker build . -t mini
+      - name: Set GITHUB_SHORT_SHA env
+        run: echo ::set-env name=GITHUB_SHORT_SHA::$(echo $GITHUB_SHA | cut -c 1-8)
+      - name: Build the tagged Docker image
+        env:
+          REGISTRY: docker.pkg.github.com/kw7oe
+          REPOSITORY: mini
+          IMAGE_NAME: mini
+          IMAGE_TAG: ${{ steps.vars.outputs.version}}-${{ env.GITHUB_SHORT_SHA }}
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY/$IMAGE_NAME:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY/$IMAGE_NAME:$IMAGE_TAG
+
